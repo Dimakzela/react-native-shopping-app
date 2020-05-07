@@ -1,6 +1,10 @@
 import React from "react";
-import {Button, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View} from "react-native";
+import {Image, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View} from "react-native";
 import Color from "../../constants/Color";
+import CommonStyles from "../../constants/CommonStyleSheet"
+import {Ionicons} from "@expo/vector-icons";
+
+const isIos = Platform.OS === "ios";
 
 const ProductItem = props => {
 
@@ -11,7 +15,7 @@ const ProductItem = props => {
     }
 
     return (
-        <View style={styles.product}>
+        <View style={{...CommonStyles.card, ...styles.product}}>
             <View style={styles.touchable}>
                 <Touchable onPress={props.onViewDetails} useForeground>
                     <View>
@@ -23,8 +27,18 @@ const ProductItem = props => {
                             <Text style={styles.price}>${props.data.price.toFixed(2)}</Text>
                         </View>
                         <View style={styles.actions}>
-                            <Button color={Color.primary} title='View Details' onPress={props.onViewDetails}/>
-                            <Button color={Color.primary} title='To Cart' onPress={props.onAddToCart}/>
+                            <Touchable onPress={props.onAddToCart}>
+                                <View style={styles.icons}>
+                                    <Ionicons name={isIos ? 'ios-add' : 'md-add'}
+                                              size={23}
+                                              color={Color.primary}
+                                    />
+                                    <Ionicons name={isIos ? 'ios-cart' : 'md-cart'}
+                                              size={23}
+                                              color={Color.primary}
+                                    />
+                                </View>
+                            </Touchable>
                         </View>
                     </View>
                 </Touchable>
@@ -36,13 +50,6 @@ const ProductItem = props => {
 
 const styles = StyleSheet.create({
     product: {
-        shadowColor: 'black',
-        shadowOpacity: 0.26,
-        shadowOffset: {width: 0, height: 2},
-        shadowRadius: 8,
-        elevation: 5,
-        borderRadius: 10,
-        backgroundColor: 'white',
         height: 300,
         margin: 20,
     },
@@ -85,12 +92,15 @@ const styles = StyleSheet.create({
 
     actions: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         height: '25%',
         paddingHorizontal: 20,
     },
 
+    icons: {
+        flexDirection: 'row',
+    }
 
 });
 

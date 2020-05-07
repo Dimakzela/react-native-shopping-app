@@ -1,8 +1,8 @@
-import {ADD_ORDER} from "../actions/cart.action";
+import {ADD_ORDER} from "../actions/order.action";
 import Order from "../../models/order";
 
 const initialState = {
-    orders: {}
+    orders: []
 };
 
 export default (state = initialState, action) => {

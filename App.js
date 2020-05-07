@@ -16,7 +16,7 @@ enableScreens();
 const rootReducer = combineReducers({
     products: productsReducer,
     cart: cartReducer,
-    order: orderReducer
+    orders: orderReducer
 });
 
 const fetchFont = () => {

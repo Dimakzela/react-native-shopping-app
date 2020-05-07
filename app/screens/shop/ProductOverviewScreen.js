@@ -1,5 +1,5 @@
 import React from "react";
-import {FlatList} from "react-native";
+import {FlatList, Platform} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
 import * as cartActions from "../../store/actions/cart.action";
@@ -34,6 +34,14 @@ const ProductOverviewScreen = props => {
 ProductOverviewScreen.navigationOptions = (navData) => {
     return {
         headerTitle: 'All Products',
+        headerLeft: () => (
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item title='Menu'
+                      iconName={Platform.OS === "android"? 'md-menu' : 'ios-menu'}
+                      onPress={() => {navData.navigation.toggleDrawer()}}
+                />
+            </HeaderButtons>
+        ),
         headerRight: () => (
             <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item title='Cart'
@@ -41,7 +49,8 @@ ProductOverviewScreen.navigationOptions = (navData) => {
                       onPress={() => {navData.navigation.navigate('Cart')}}
                 />
             </HeaderButtons>
-        )
+        ),
+
     };
 };
 
