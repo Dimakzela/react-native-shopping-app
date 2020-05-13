@@ -87,8 +87,9 @@ const EditProductScreen = props => {
             }
         } catch (err) {
             setError(err.message);
+            setIsLoading(false);
+            return;
         }
-        setIsLoading(false);
         props.navigation.goBack();
     }, [dispatch, formState]);
 
@@ -104,6 +105,12 @@ const EditProductScreen = props => {
             input: input
         })
     }, [dispatchFormState]);
+
+    useEffect(() => {
+        if(error) {
+            Alert.alert("An Error Occurred!", error, [{text: 'OK'}]);
+        }
+    }, [error])
 
     if (isLoading) {
         return (

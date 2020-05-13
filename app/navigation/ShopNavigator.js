@@ -2,7 +2,7 @@ import {createStackNavigator} from "react-navigation-stack";
 import ProductOverviewScreen from "../screens/shop/ProductOverviewScreen";
 import Color from "../constants/Color";
 import {Platform, Text} from "react-native";
-import {createAppContainer} from "react-navigation";
+import {createAppContainer, createSwitchNavigator} from "react-navigation";
 import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
 import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
@@ -13,6 +13,7 @@ import {createBottomTabNavigator} from "react-navigation-tabs";
 import {createMaterialBottomTabNavigator} from "react-navigation-material-bottom-tabs";
 import UserProductsScreen from "../screens/user/UserProductsScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
+import AuthScreen from "../screens/user/AuthScreen";
 
 const isIos = Platform.OS === "ios";
 
@@ -26,7 +27,7 @@ const defaultNavOptions = {
     headerBackTitleStyle: {
         fontFamily: 'open-sans',
     },
-    headerTintColor: isIos? Color.primary: 'white'
+    headerTintColor: isIos ? Color.primary : 'white'
 
 };
 
@@ -38,7 +39,7 @@ const ProductsNav = createStackNavigator({
         navigationOptions: {
             drawerIcon: drawerConfig =>
                 <Ionicons
-                    name={isIos? 'ios-create' : 'md-create'}
+                    name={isIos ? 'ios-create' : 'md-create'}
                     size={23}
                     color={drawerConfig.tintColor}
                 />
@@ -55,7 +56,7 @@ const ordersNav = createStackNavigator(
         navigationOptions: {
             drawerIcon: drawerConfig =>
                 <Ionicons
-                    name={isIos? 'ios-list' : 'md-list'}
+                    name={isIos ? 'ios-list' : 'md-list'}
                     size={23}
                     color={drawerConfig.tintColor}
                 />
@@ -72,7 +73,7 @@ const CartNav = createStackNavigator(
         navigationOptions: {
             drawerIcon: drawerConfig =>
                 <Ionicons
-                    name={isIos? 'ios-cart' : 'md-cart'}
+                    name={isIos ? 'ios-cart' : 'md-cart'}
                     size={23}
                     color={drawerConfig.tintColor}
                 />
@@ -90,7 +91,7 @@ const AdminNav = createStackNavigator(
         navigationOptions: {
             drawerIcon: drawerConfig =>
                 <Ionicons
-                    name={isIos? 'ios-create' : 'md-create'}
+                    name={isIos ? 'ios-create' : 'md-create'}
                     size={23}
                     color={drawerConfig.tintColor}
                 />
@@ -190,4 +191,16 @@ const ShopNav = createDrawerNavigator({
     }
 });
 
-export default createAppContainer(ShopNav);
+const AuthNav = createStackNavigator({
+    Auth: {
+        screen: AuthScreen,
+        defaultNavOptions: defaultNavOptions
+    }
+});
+
+const MainNav = createSwitchNavigator({
+    Auth: AuthNav,
+    Shop: ShopNav
+});
+
+export default createAppContainer(MainNav);

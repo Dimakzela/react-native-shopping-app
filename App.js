@@ -4,6 +4,7 @@ import {applyMiddleware, combineReducers, createStore} from "redux";
 import productsReducer from './app/store/reducers/products.reducer';
 import cartReducer from './app/store/reducers/cart.reducer';
 import orderReducer from './app/store/reducers/order.reducer';
+import authReducer from './app/store/reducers/auth.reducer';
 import {Provider} from "react-redux";
 import ShopNavigator from "./app/navigation/ShopNavigator";
 import {enableScreens} from "react-native-screens";
@@ -17,7 +18,8 @@ enableScreens();
 const rootReducer = combineReducers({
     products: productsReducer,
     cart: cartReducer,
-    orders: orderReducer
+    orders: orderReducer,
+    auth: authReducer,
 });
 
 const fetchFont = () => {

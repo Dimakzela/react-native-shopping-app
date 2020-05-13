@@ -6,8 +6,9 @@ export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const SET_PRODUCT = 'SET_PRODUCT';
 
 export const fetchProduct = () => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try{
+            const userId = getState().auth.userId;
             const response = await fetch(
                 'https://rn-shop-5f0c1.firebaseio.com/products.json'
             );
@@ -18,7 +19,7 @@ export const fetchProduct = () => {
                 for (const key in resData) {
                     loadedProducts.push(new Product(
                         key,
-                        'u1',
+                        resData[key].ownerId,
                         resData[key].title,
                         resData[key].imageUrl,
                         resData[key].description,
@@ -27,7 +28,8 @@ export const fetchProduct = () => {
                 }
                 dispatch({
                     type: SET_PRODUCT,
-                    products: loadedProducts
+                    products: loadedProducts,
+                    userProducts: loadedProducts.filter(prod => prod.ownerId === userId)
                 });
             } else {
                 throw new Error('Something went wrong');
@@ -39,8 +41,9 @@ export const fetchProduct = () => {
 }
 
 export const deleteProduct = (pId) => {
-    return async dispatch => {
-        await fetch(`https://rn-shop-5f0c1.firebaseio.com/products/${pId}.json`, {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        await fetch(`https://rn-shop-5f0c1.firebaseio.com/products/${pId}.json?auth=${token}`, {
             method: 'DELETE'
         });
 
@@ -51,8 +54,10 @@ export const deleteProduct = (pId) => {
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-    return async dispatch => {
-        const response = await fetch('https://rn-shop-5f0c1.firebaseio.com/products.json', {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        const userId = getState().auth.userId;
+        const response = await fetch(`https://rn-shop-5f0c1.firebaseio.com/products.json?auth=${token}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,7 +66,8 @@ export const createProduct = (title, description, imageUrl, price) => {
                 title,
                 description,
                 imageUrl,
-                price
+                price,
+                ownerId: userId
             }),
         });
 
@@ -69,32 +75,43 @@ export const createProduct = (title, description, imageUrl, price) => {
 
         dispatch({
             type: CREATE_PRODUCT,
-            productData: {id: responseData.name, title, description, imageUrl, price}
+            productData: {id: responseData.name, title, description, imageUrl, price, ownerId: userId}
         });
     };
 };
 
 export const updateProduct = (id, title, description, imageUrl) => {
-    return async dispatch => {
-        await fetch(`https://rn-shop-5f0c1.firebaseio.com/products/${id}.json`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title,
-                description,
-                imageUrl,
-            }),
-        });
+    return async (dispatch, getState) => {
+        try{
+            const token = getState().auth.token;
+            const response = await fetch(
+                `https://rn-shop-5f0c1.firebaseio.com/products/${id}.json?auth=${token}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    imageUrl,
+                }),
+            });
 
-        dispatch({
-            type: UPDATE_PRODUCT,
-            pId: id,
-            productData: {
-                title,
-                description,
-                imageUrl}
-        });
+            if(response.ok) {
+                dispatch({
+                    type: UPDATE_PRODUCT,
+                    pId: id,
+                    productData: {
+                        title,
+                        description,
+                        imageUrl}
+                });
+            } else {
+                throw new Error('Something went wrong')
+            }
+
+        } catch (err) {
+            throw err;
+        }
     };
 };
