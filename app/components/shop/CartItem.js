@@ -5,32 +5,18 @@ import {Ionicons} from '@expo/vector-icons'
 const CartItem = props => {
     return (
         <View style={styles.cartItem}>
-            <TouchableOpacity onPress={props.onRemove} style={styles.deleteBtn}>
-                <Ionicons name={Platform.OS === "android"? 'md-remove' : 'ios-remove'}
-                          size={23}
-                          color='red'
-                />
-            </TouchableOpacity>
             <View style={styles.itemData}>
-                <Text style={styles.quantity}>{props.data.productQuantity} </Text>
-                <Text style={styles.title}>{props.data.productTitle}</Text>
+                <Text style={styles.quantity}>{props.productQuantity} </Text>
+                <Text style={styles.title}>{props.productTitle}</Text>
             </View>
             <View style={styles.itemData}>
-                <Text style={styles.amount}>R{props.data.productTotal.toFixed(2)}</Text>
-
-                <TouchableOpacity onPress={() =>{}} style={styles.deleteBtn}>
-                    <Ionicons name={Platform.OS === "android"? 'md-add' : 'ios-add'}
-                              size={23}
-                              color='green'
-                    />
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={props.onRemove} style={styles.deleteBtn}>
+                <Text style={styles.amount}>R{props.productTotal.toFixed(2)}</Text>
+                {props.deletable && <TouchableOpacity onPress={props.onRemove} style={styles.deleteBtn}>
                     <Ionicons name={Platform.OS === "android"? 'md-trash' : 'ios-trash'}
                               size={23}
                               color='red'
                     />
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
         </View>
     );

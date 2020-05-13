@@ -11,6 +11,8 @@ import {Ionicons} from "@expo/vector-icons";
 import React from "react";
 import {createBottomTabNavigator} from "react-navigation-tabs";
 import {createMaterialBottomTabNavigator} from "react-navigation-material-bottom-tabs";
+import UserProductsScreen from "../screens/user/UserProductsScreen";
+import EditProductScreen from "../screens/user/EditProductScreen";
 
 const isIos = Platform.OS === "ios";
 
@@ -80,14 +82,32 @@ const CartNav = createStackNavigator(
     }
 );
 
+const AdminNav = createStackNavigator(
+    {
+        UserProduct: UserProductsScreen,
+        EditProduct: EditProductScreen,
+    }, {
+        navigationOptions: {
+            drawerIcon: drawerConfig =>
+                <Ionicons
+                    name={isIos? 'ios-create' : 'md-create'}
+                    size={23}
+                    color={drawerConfig.tintColor}
+                />
+
+        },
+        defaultNavigationOptions: defaultNavOptions
+    }
+);
+
 const tabScreenConfig = {
-    Products: {
+    Home: {
         screen: ProductsNav,
         navigationOptions: {
-            tabBarLabel: !isIos ? <Text style={{fontFamily: 'open-sans-bold'}}>Products</Text> : '',
+            tabBarLabel: !isIos ? <Text style={{fontFamily: 'open-sans-bold'}}>Home</Text> : '',
             tabBarIcon: tabInfo => {
                 return (
-                    <Ionicons name={isIos ? 'ios-create' : 'md-create'}
+                    <Ionicons name={isIos ? 'ios-home' : 'md-home'}
                               size={25}
                               color={tabInfo.tintColor}
                     />
@@ -147,7 +167,23 @@ const MealsFavTabNavigator = isIos ?
     });
 
 const ShopNav = createDrawerNavigator({
-    Products: MealsFavTabNavigator,
+    Home: {
+        screen: MealsFavTabNavigator,
+        navigationOptions: {
+            drawerLabel: 'Home',
+            drawerIcon: () => (
+                <Ionicons size={23}
+                          name={isIos ? 'ios-home' : 'md-home'}>
+                </Ionicons>
+            )
+        }
+    },
+    Admin: {
+        screen: AdminNav,
+        navigationOptions: {
+            drawerLabel: 'Administrator'
+        }
+    },
 }, {
     contentOptions: {
         activeTintColor: Color.primary

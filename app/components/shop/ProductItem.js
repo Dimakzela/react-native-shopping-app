@@ -1,10 +1,6 @@
 import React from "react";
 import {Image, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View} from "react-native";
-import Color from "../../constants/Color";
-import CommonStyles from "../../constants/CommonStyleSheet"
-import {Ionicons} from "@expo/vector-icons";
-
-const isIos = Platform.OS === "ios";
+import Card from "../UI/Card";
 
 const ProductItem = props => {
 
@@ -15,35 +11,22 @@ const ProductItem = props => {
     }
 
     return (
-        <View style={{...CommonStyles.card, ...styles.product}}>
+        <Card style={styles.product}>
             <View style={styles.touchable}>
-                <Touchable onPress={props.onViewDetails} useForeground>
+                <Touchable onPress={props.onSelect} useForeground>
                     <View>
                         <View style={styles.imageContainer}>
-                            <Image style={styles.image} source={{uri: props.data.imageUrl}}/>
+                            <Image style={styles.image} source={{uri: props.data.imageUrl}} resizeMode="contain"/>
                         </View>
                         <View style={styles.details}>
                             <Text style={styles.title}>{props.data.title}</Text>
                             <Text style={styles.price}>${props.data.price.toFixed(2)}</Text>
                         </View>
-                        <View style={styles.actions}>
-                            <Touchable onPress={props.onAddToCart}>
-                                <View style={styles.icons}>
-                                    <Ionicons name={isIos ? 'ios-add' : 'md-add'}
-                                              size={23}
-                                              color={Color.primary}
-                                    />
-                                    <Ionicons name={isIos ? 'ios-cart' : 'md-cart'}
-                                              size={23}
-                                              color={Color.primary}
-                                    />
-                                </View>
-                            </Touchable>
-                        </View>
+                        {props.children}
                     </View>
                 </Touchable>
             </View>
-        </View>
+        </Card>
 
     );
 };
@@ -68,13 +51,14 @@ const styles = StyleSheet.create({
     },
 
     image: {
+        marginTop: 5,
         width: '100%',
         height: '100%',
     },
 
     details: {
         alignItems: 'center',
-        height: '15%',
+        height: '17%',
         padding: 10
     },
 
@@ -88,18 +72,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#888',
         fontFamily: 'open-sans'
-    },
-
-    actions: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '25%',
-        paddingHorizontal: 20,
-    },
-
-    icons: {
-        flexDirection: 'row',
     }
 
 });

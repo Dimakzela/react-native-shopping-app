@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Color from "../../constants/Color";
 import * as cartActions from "../../store/actions/cart.action";
 import {Ionicons} from "@expo/vector-icons";
-import CommonStyles from "../../constants/CommonStyleSheet"
+import Card from "../../components/UI/Card";
 
 
 const isIos = Platform.OS === "ios";
@@ -35,7 +35,7 @@ const ProductDetailScreen = props => {
             <Image style={styles.image} source={{uri: selectedProduct.imageUrl}}/>
             <View style={styles.actions}>
                 <Touchable onPress={() => {dispatch(cartActions.addToCart(selectedProduct))}}>
-                    <View style={{...CommonStyles.card, ...styles.touchable}}>
+                    <Card style={styles.touchable}>
                         <Ionicons name={isIos ? 'ios-add' : 'md-add'}
                                   size={23}
                                   color={isIos? Color.primary: 'white'}
@@ -45,7 +45,7 @@ const ProductDetailScreen = props => {
                                   color={isIos? Color.primary: 'white'}
                         />
                         <Text style={styles.touchableText}>Add to Cart</Text>
-                    </View>
+                    </Card>
                 </Touchable>
             </View>
             <Text style={styles.price}>R{selectedProduct.price.toFixed(2)}</Text>
