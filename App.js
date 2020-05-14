@@ -6,12 +6,12 @@ import cartReducer from './app/store/reducers/cart.reducer';
 import orderReducer from './app/store/reducers/order.reducer';
 import authReducer from './app/store/reducers/auth.reducer';
 import {Provider} from "react-redux";
-import ShopNavigator from "./app/navigation/ShopNavigator";
 import {enableScreens} from "react-native-screens";
 import {AppLoading} from "expo";
 import * as Font from 'expo-font';
 import ReduxThunk from 'redux-thunk';
 import {composeWithDevTools} from "redux-devtools-extension";
+import NavigationContainer from "./app/navigation/NavigationContainer";
 
 enableScreens();
 
@@ -40,7 +40,7 @@ export default function App() {
 
     return (
         <Provider store={store}>
-            <ShopNavigator/>
+            <NavigationContainer/>
         </Provider>
     );
 }

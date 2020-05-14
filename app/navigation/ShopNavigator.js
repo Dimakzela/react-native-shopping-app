@@ -1,12 +1,12 @@
 import {createStackNavigator} from "react-navigation-stack";
 import ProductOverviewScreen from "../screens/shop/ProductOverviewScreen";
 import Color from "../constants/Color";
-import {Platform, Text} from "react-native";
+import {Button, Platform, SafeAreaView, Text, View} from "react-native";
 import {createAppContainer, createSwitchNavigator} from "react-navigation";
 import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
 import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
-import {createDrawerNavigator} from "react-navigation-drawer";
+import {createDrawerNavigator, DrawerItems} from "react-navigation-drawer";
 import {Ionicons} from "@expo/vector-icons";
 import React from "react";
 import {createBottomTabNavigator} from "react-navigation-tabs";
@@ -14,6 +14,8 @@ import {createMaterialBottomTabNavigator} from "react-navigation-material-bottom
 import UserProductsScreen from "../screens/user/UserProductsScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import AuthScreen from "../screens/user/AuthScreen";
+import StartupScreen from "../screens/StartupScreen";
+import * as authActions from "../store/actions/auth.action";
 
 const isIos = Platform.OS === "ios";
 
@@ -188,6 +190,18 @@ const ShopNav = createDrawerNavigator({
 }, {
     contentOptions: {
         activeTintColor: Color.primary
+    },
+    contentComponent: props => {
+        return (
+            <View style={{flex: 1, padding: 20}}>
+                <SafeAreaView forceInsert={{top: 'always', horizontal: 'never'}}>
+                    <DrawerItems {...props}/>
+                    <Button title='Logout' color={Color.primary} onPress={() => {
+                        authActions.logout();
+                    }}/>
+                </SafeAreaView>
+            </View>
+        );
     }
 });
 
@@ -199,6 +213,7 @@ const AuthNav = createStackNavigator({
 });
 
 const MainNav = createSwitchNavigator({
+    Startup: StartupScreen,
     Auth: AuthNav,
     Shop: ShopNav
 });
