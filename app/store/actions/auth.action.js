@@ -1,5 +1,16 @@
-export const SIGN_UP = 'SIGN_UP';
-export const LOGIN = 'LOGIN';
+import {AsyncStorage} from "react-native";
+
+export const AUTHENTICATE = 'AUTHENTICATE';
+export const LOGOUT = 'LOGOUT';
+
+let timer;
+
+export const authenticate = (userId, token, expiryTime) => {
+    return dispatch => {
+        dispatch(setLogoutTimer(expiryTime));
+        dispatch({type: AUTHENTICATE, userId: userId, token: token});
+    };
+};
 
 export const signUp = (email, password) => {
     return async dispatch => {
@@ -18,11 +29,11 @@ export const signUp = (email, password) => {
             }
         );
 
-        if(!response.ok) {
+        if (!response.ok) {
             const errorData = await response.json();
             const errorId = errorData.error.message;
             let message = 'Something went wrong';
-            if(errorId === 'EMAIL_EXISTS') {
+            if (errorId === 'EMAIL_EXISTS') {
                 message = 'This email exist already!';
             }
 
@@ -30,12 +41,11 @@ export const signUp = (email, password) => {
         }
 
         const resData = await response.json();
+        let expiryTime = parseInt(resData.expiresIn) * 1000;
+        dispatch(authenticate(resData.localId, resData.idToken, expiryTime));
 
-        dispatch({
-            type: SIGN_UP,
-            token: resData.idToken,
-            userId: resData.localId,
-        });
+        const expirationDate = new Date(new Date().getTime() + expiryTime);
+        saveDataToStorage(resData.idToken, resData.localId, expirationDate);
     };
 }
 
@@ -56,13 +66,13 @@ export const login = (email, password) => {
             }
         );
 
-        if(!response.ok) {
+        if (!response.ok) {
             const errorData = await response.json();
             const errorId = errorData.error.message;
             let message = 'Something went wrong';
-            if(errorId === 'EMAIL_NOT_FOUND') {
+            if (errorId === 'EMAIL_NOT_FOUND') {
                 message = 'This email could not be found!';
-            } else if(errorId === 'INVALID_PASSWORD') {
+            } else if (errorId === 'INVALID_PASSWORD') {
                 message = 'This password is not valid!';
             }
 
@@ -70,11 +80,45 @@ export const login = (email, password) => {
         }
 
         const resData = await response.json();
+        let expiryTime = parseInt(resData.expiresIn) * 1000;
+        dispatch(authenticate(resData.localId, resData.idToken, expiryTime));
 
-        dispatch({
-            type: LOGIN,
-            token: resData.idToken,
-            userId: resData.localId,
-        });
+        const expirationDate = new Date(new Date().getTime() + expiryTime);
+        saveDataToStorage(resData.idToken, resData.localId, expirationDate);
     };
-}
+};
+
+export const logout = () => {
+    clearLogoutTimer();
+    AsyncStorage.removeItem('userData').then();
+    return {type: LOGOUT};
+};
+
+const clearLogoutTimer = () => {
+    if (timer) {
+        clearTimeout(timer);
+    }
+};
+
+const setLogoutTimer = expirationTime => {
+    return dispatch => {
+        timer = setTimeout(() => {
+            if (expirationTime > 60000) {
+                dispatch(setLogoutTimer(expirationTime - 60000));
+            } else {
+                dispatch(logout());
+            }
+        }, 60000);
+    };
+};
+
+const saveDataToStorage = (token, userId, expirationDate) => {
+    AsyncStorage.setItem(
+        'userData',
+        JSON.stringify({
+            token: token,
+            userId: userId,
+            expiryDate: expirationDate.toISOString()
+        })
+    );
+};
